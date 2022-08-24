@@ -65,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void validateCreate(EmployeeCreateSdi request) {
-        String code = request.getCode();
+        String code = request.getCode().toUpperCase();
         String email = request.getEmail();
         String phone = request.getPhone();
         Long departmentId = request.getDepartmentId();

@@ -13,7 +13,7 @@ public interface EmployeeRepo extends JpaRepository<Employee,Long>,EmployeeRepoC
     Optional<Employee> findById(Long id);
 
     @Query(
-            value = "SELECT * FROM EMPLOYEE WHERE STATUS <> 2 AND CODE = :code",
+            value = "SELECT * FROM EMPLOYEE WHERE STATUS <> 2 AND UPPER(CODE) = :code",
             nativeQuery = true
     )
     Optional<Employee> findByCode(String code);

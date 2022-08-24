@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -81,8 +82,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private void validCreate(DepartmentCreateSdi request) {
-        String code = request.getCode();
-        String name = request.getName();
+        String code = request.getCode().toUpperCase();
+        String name = request.getName().toUpperCase();
         Optional<Department> departmentByCode = departmentRepo.findByCode(code);
         if (departmentByCode.isPresent()) {
             throw new DuplicateException(("Ma phong ban [" + code + "] da ton tai"));
@@ -96,8 +97,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private void validUpdate(DepartmentUpdateSdi request) throws Exception {
         Long id = request.getId();
-        String code = request.getCode();
-        String name = request.getName();
+        String code = request.getCode().toUpperCase();
+        String name = request.getName().toUpperCase();
         Optional<Department> foundDepartment = departmentRepo.findByIdWithAllStatus(id);
         if (foundDepartment.isEmpty()) {
             throw new NotFoundException("Không tìm thấy phòng ban với id: [" + id + "]");

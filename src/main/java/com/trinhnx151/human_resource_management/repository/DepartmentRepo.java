@@ -19,25 +19,25 @@ public interface DepartmentRepo extends JpaRepository<Department,Long>, Departme
     Optional<Department> findByIdWithAllStatus(Long id);
 
     @Query(
-            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND CODE = :code",
+            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND UPPER(CODE) = :code",
             nativeQuery = true
     )
     Optional<Department> findByCode(String code);
 
     @Query(
-            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND CODE = :code AND ID <> :ignoreId",
+            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND UPPER(CODE) = :code AND ID <> :ignoreId",
             nativeQuery = true
     )
     Optional<Department> findByCode(String code, Long ignoreId);
 
     @Query(
-            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND NAME = :name",
+            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND UPPER(NAME) = :name",
             nativeQuery = true
     )
     Optional<Department> findByName(String name);
 
     @Query(
-            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND NAME = :name AND ID <> :ignoreId",
+            value = "SELECT * FROM DEPARTMENT WHERE STATUS <> 2 AND UPPER(NAME) = :name AND ID <> :ignoreId",
             nativeQuery = true
     )
     Optional<Department> findByName(String name,Long ignoreId);
