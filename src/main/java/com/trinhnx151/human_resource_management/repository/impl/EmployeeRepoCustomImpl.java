@@ -22,7 +22,7 @@ public class EmployeeRepoCustomImpl implements EmployeeRepoCustom {
 
     @Override
     public Page<EmployeeSearchSdo> search(EmployeeSearchSdi request, Pageable pageable) {
-        String keyword = request.getKeyword();
+        String keyword = request.getKeyword().toUpperCase();
         int pageSize = pageable.getPageSize();
         int firstResult = pageSize * (pageable.getPageNumber()-1);
         Map<String, Object> queryParams = new HashMap<>();
@@ -39,9 +39,8 @@ public class EmployeeRepoCustomImpl implements EmployeeRepoCustom {
         StringBuilder sqlConditional = new StringBuilder();
         sqlConditional.append("FROM EMPLOYEE E ");
         sqlConditional.append("WHERE E.STATUS <> 2 ");
-        if (keyword != null && !keyword.isEmpty()) {
-            sqlConditional.append("AND (E.CODE LIKE :keyword OR E.NAME LIKE :keyword OR E.PHONE LIKE :keyword OR E.EMAIL LIKE :keyword OR E.GENDER LIKE :keyword OR E.LEVEL LIKE :keyword) ");
-
+        if (!keyword.isEmpty()) {
+            sqlConditional.append("AND (UPPER(E.CODE) LIKE :keyword UPPER(E.NAME) LIKE :keyword OR E.PHONE LIKE :keyword OR E.EMAIL LIKE :keyword OR E.GENDER LIKE :keyword OR E.LEVEL LIKE :keyword) ");
             queryParams.put("keyword", "%" + keyword + "%");
         }
 
@@ -63,7 +62,7 @@ public class EmployeeRepoCustomImpl implements EmployeeRepoCustom {
             listData.add(employeeSearchSdo);
         }
         Query queryCountAll = em.createNativeQuery(sqlCountAll + sqlConditional);
-        Integer countAll = queryCountAll.getFirstResult();
-        return new PageImpl<>(listData, pageable, countAll.longValue());
+        int countAll = queryCountAll.getFirstResult();
+        return new PageImpl<>(listData, pageable, countAll);
     }
 }

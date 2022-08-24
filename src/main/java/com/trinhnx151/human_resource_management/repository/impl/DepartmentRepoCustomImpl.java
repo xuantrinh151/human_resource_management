@@ -21,7 +21,7 @@ public class DepartmentRepoCustomImpl implements DepartmentRepoCustom {
 
     @Override
     public Page<DepartmentSearchSdo> search(DepartmentSearchSdi request, Pageable pageable) {
-        String keyword = request.getKeyword();
+        String keyword = request.getKeyword().toUpperCase();
         int pageSize = pageable.getPageSize();
         int firstResult = pageSize * (pageable.getPageNumber()-1);
 
@@ -37,7 +37,7 @@ public class DepartmentRepoCustomImpl implements DepartmentRepoCustom {
         sqlConditional.append("FROM DEPARTMENT D ");
         sqlConditional.append("WHERE D.STATUS <> 2 ");
         if (keyword != null && !keyword.isEmpty()) {
-            sqlConditional.append("AND (D.CODE LIKE :keyword OR D.NAME LIKE :keyword) ");
+            sqlConditional.append("AND ( UPPER(D.CODE) LIKE :keyword OR UPPER(D.NAME) LIKE :keyword) ");
             queryParams.put("keyword", "%" + keyword + "%");
         }
         Query query = em.createNativeQuery(sqlGetData + sqlConditional);
