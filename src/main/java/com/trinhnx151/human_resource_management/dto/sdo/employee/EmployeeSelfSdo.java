@@ -23,4 +23,5 @@ public class EmployeeSelfSdo {
     private String phone;
     private Integer status;
     private Long departmentId;
+    private String token;
 }

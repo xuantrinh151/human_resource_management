@@ -1,6 +1,7 @@
 package com.trinhnx151.human_resource_management.controller;
 
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeCreateSdi;
+import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeLoginSdi;
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeSearchSdi;
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeUpdateSdi;
 import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeCreateSdo;
@@ -9,19 +10,29 @@ import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeSelfSdo
 import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeUpdateSdo;
 import com.trinhnx151.human_resource_management.entity.Employee;
 import com.trinhnx151.human_resource_management.service.EmployeeService;
+import com.trinhnx151.human_resource_management.service.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/v1/employee")
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final StorageService storageService;
 
     @GetMapping("/search")
     Page<EmployeeSearchSdo> search(EmployeeSearchSdi request, Pageable pageable) {
@@ -38,10 +49,10 @@ public class EmployeeController {
         return employeeService.findById(id);
     }
 
-    @PostMapping("/{create}")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    EmployeeCreateSdo create(@RequestBody @Valid EmployeeCreateSdi request) throws Exception {
-        return employeeService.create(request);
+    EmployeeCreateSdo create(@RequestBody @Valid EmployeeCreateSdi request, MultipartFile file) throws Exception {
+        return employeeService.create(request, file);
     }
 
     @PutMapping("/update")
@@ -53,5 +64,27 @@ public class EmployeeController {
     @DeleteMapping("/{id}/delete")
     Boolean deleteEmployee(@PathVariable Long id) {
         return employeeService.deleteById(id);
+    }
+
+    @PostMapping("/login")
+    public Map<String, EmployeeSelfSdo> login(@RequestBody Map<String, EmployeeLoginSdi> request, HttpSession session) {
+        return employeeService.login(request, session);
+    }
+
+    @PostMapping("/upload")
+    public String fileUpload(@RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
+        return storageService.storeFile(file, session);
+    }
+
+    @GetMapping("files/{fileName:.+}")
+    public ResponseEntity<byte[]> readDetailFile(@PathVariable String fileName) {
+        try {
+            byte[] bytes = storageService.readFileContent(fileName);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(bytes);
+        } catch (Exception ex){
+            return ResponseEntity.noContent().build();
+        }
     }
 }

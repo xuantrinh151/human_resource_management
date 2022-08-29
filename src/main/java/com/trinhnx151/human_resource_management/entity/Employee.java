@@ -25,9 +25,12 @@ public class Employee {
     private double salary;
     private int level;
     private String email;
+    private String password;
     private String phone;
     private Integer status;
     private Long departmentId;
+    //private Long roleId;
+
     public interface Status {
         Integer CEASE_USING = 0;
         Integer IN_USE = 1;

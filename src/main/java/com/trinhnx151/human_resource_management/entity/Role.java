@@ -13,5 +13,10 @@ public class Role {
     private Long id;
     private String code;
     private String name;
-
+    private Integer status;
+    public interface Status {
+        Integer CEASE_USING = 0;
+        Integer IN_USE = 1;
+        Integer DELETED = 2;
+    }
 }

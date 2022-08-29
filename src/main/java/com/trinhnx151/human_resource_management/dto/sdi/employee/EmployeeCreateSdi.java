@@ -27,7 +27,7 @@ public class EmployeeCreateSdi {
 
     private boolean gender;
 
-    @Size(max = 500,message = "Không được quá 500 ký tự")
+
     private String image;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

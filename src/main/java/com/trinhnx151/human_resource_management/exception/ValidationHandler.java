@@ -2,6 +2,7 @@ package com.trinhnx151.human_resource_management.exception;
 
 import com.trinhnx151.human_resource_management.entity.ResponseOject;
 import com.trinhnx151.human_resource_management.exception.custom.DuplicateException;
+import com.trinhnx151.human_resource_management.exception.custom.ImageErrorException;
 import com.trinhnx151.human_resource_management.exception.custom.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,13 @@ public class ValidationHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ResponseOject> handleCustomNotFoundExceptions(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseOject("500", "Not Found", e.getMessage())
+        );
+    }
+
+    @ExceptionHandler(ImageErrorException.class)
+    public ResponseEntity<ResponseOject> uploadImageErrorExceptions(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ResponseOject("500", "Upload Fail", e.getMessage())
         );
     }
 
