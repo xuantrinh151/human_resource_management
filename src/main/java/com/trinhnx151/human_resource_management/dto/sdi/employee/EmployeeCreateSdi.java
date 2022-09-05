@@ -1,6 +1,7 @@
 package com.trinhnx151.human_resource_management.dto.sdi.employee;
 
 import com.sun.istack.NotNull;
+import com.trinhnx151.human_resource_management.dto.sdi.image.UploadImageSdi;
 import com.trinhnx151.human_resource_management.entity.Department;
 import com.trinhnx151.human_resource_management.entity.Employee;
 import lombok.AllArgsConstructor;
@@ -24,11 +25,7 @@ public class EmployeeCreateSdi {
     @Size(max = 255,message = "Name không quá 255 ký tự")
     private String name;
 
-
     private boolean gender;
-
-
-    private String image;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Timestamp dob;
@@ -48,9 +45,16 @@ public class EmployeeCreateSdi {
     private String email;
 
     @NotNull
+    @NotEmpty(message = "Mật khẩu không được để trống")
+    private String password;
+
+    @NotNull
     @NotEmpty(message = "Phone không được để trống")
     @Size(max = 15,message = "Phone không quá 15 ký tự")
     private String phone;
+
+    //ảnh định dạng base64 -> convert file -> lưu lại -> path ảnh -> lưu vào db
+    private UploadImageSdi image;
 
     @NotNull
     private Long departmentId;
@@ -59,6 +63,7 @@ public class EmployeeCreateSdi {
         Employee employee = new Employee();
         BeanUtils.copyProperties(this, employee);
         employee.setStatus(Department.Status.IN_USE);
+
         return employee;
     }
 }

@@ -4,6 +4,7 @@ import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeCreateS
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeLoginSdi;
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeSearchSdi;
 import com.trinhnx151.human_resource_management.dto.sdi.employee.EmployeeUpdateSdi;
+import com.trinhnx151.human_resource_management.dto.sdi.image.UploadImageSdi;
 import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeCreateSdo;
 import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeSearchSdo;
 import com.trinhnx151.human_resource_management.dto.sdo.employee.EmployeeSelfSdo;
@@ -12,15 +13,12 @@ import com.trinhnx151.human_resource_management.entity.Employee;
 import com.trinhnx151.human_resource_management.service.EmployeeService;
 import com.trinhnx151.human_resource_management.service.StorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import java.util.Map;
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final StorageService storageService;
+
 
     @GetMapping("/search")
     Page<EmployeeSearchSdo> search(EmployeeSearchSdi request, Pageable pageable) {
@@ -51,8 +50,8 @@ public class EmployeeController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    EmployeeCreateSdo create(@RequestBody @Valid EmployeeCreateSdi request, MultipartFile file) throws Exception {
-        return employeeService.create(request, file);
+    EmployeeCreateSdo create(@RequestBody @Valid EmployeeCreateSdi request) throws Exception {
+        return employeeService.create(request);
     }
 
     @PutMapping("/update")
@@ -72,8 +71,10 @@ public class EmployeeController {
     }
 
     @PostMapping("/upload")
-    public String fileUpload(@RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
-        return storageService.storeFile(file, session);
+    public String fileUpload(@RequestBody UploadImageSdi uploadImageSdi) throws IOException {
+        //return storageService.storeFile(file, session);
+        //return storageService.uploadFileWithBase64(file,session);
+        return storageService.upload(uploadImageSdi);
     }
 
     @GetMapping("files/{fileName:.+}")

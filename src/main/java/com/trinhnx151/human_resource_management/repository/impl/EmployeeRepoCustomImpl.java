@@ -40,15 +40,15 @@ public class EmployeeRepoCustomImpl implements EmployeeRepoCustom {
         sqlConditional.append("FROM EMPLOYEE E ");
         sqlConditional.append("WHERE E.STATUS <> 2 ");
         if (!keyword.isEmpty()) {
-            sqlConditional.append("AND (UPPER(E.CODE) LIKE :keyword UPPER(E.NAME) LIKE :keyword OR E.PHONE LIKE :keyword OR E.EMAIL LIKE :keyword OR E.GENDER LIKE :keyword OR E.LEVEL LIKE :keyword) ");
+            sqlConditional.append("AND (UPPER(E.CODE) LIKE :keyword OR UPPER(E.NAME) LIKE :keyword OR E.PHONE LIKE :keyword OR E.EMAIL LIKE :keyword OR E.GENDER LIKE :keyword OR E.LEVEL LIKE :keyword) ");
             queryParams.put("keyword", "%" + keyword + "%");
         }
 
-        javax.persistence.Query query = em.createNativeQuery(sqlGetData + sqlConditional);
+        Query query = em.createNativeQuery(sqlGetData + sqlConditional);
         query.setMaxResults(pageSize);
         query.setFirstResult(firstResult);
         queryParams.forEach(query::setParameter);
-        List<Object[]> queryResult = query.getResultList();
+        List<Object[]> queryResult =  query.getResultList();
         List<EmployeeSearchSdo> listData = new ArrayList<>();
         for (Object[] object : queryResult) {
             EmployeeSearchSdo employeeSearchSdo = new EmployeeSearchSdo();

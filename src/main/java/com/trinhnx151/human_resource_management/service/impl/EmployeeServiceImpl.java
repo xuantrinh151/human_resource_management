@@ -15,6 +15,7 @@ import com.trinhnx151.human_resource_management.exception.custom.NotFoundExcepti
 import com.trinhnx151.human_resource_management.repository.DepartmentRepo;
 import com.trinhnx151.human_resource_management.repository.EmployeeRepo;
 import com.trinhnx151.human_resource_management.service.EmployeeService;
+import com.trinhnx151.human_resource_management.service.StorageService;
 import com.trinhnx151.human_resource_management.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepo departmentRepo;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
+    private final StorageService storageService;
 
     @Value("${project.image}")
     private String path;
@@ -56,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .code(employee.get().getCode())
                     .fullName(employee.get().getName())
                     .gender(employee.get().isGender())
-                    .image("http://localhost:8080/api/v1/employee/files/" + employee.get().getImage())
+                    .image( employee.get().getImage())
                     .dob(employee.get().getDob())
                     .salary(employee.get().getSalary())
                     .level(employee.get().getLevel())
@@ -71,10 +73,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeCreateSdo create(EmployeeCreateSdi request, MultipartFile file) throws IOException {
+    public EmployeeCreateSdo create(EmployeeCreateSdi request) throws IOException {
         this.validateCreate(request);
         Employee employee = request.toEmployee();
-        //employee.setImage(uploadImage(path, file));
+        employee.setImage(storageService.upload(request.getImage()));
         //employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employeeRepo.save(employee);
         return EmployeeCreateSdo.builder()
@@ -158,31 +160,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getAllEmployee() {
         return employeeRepo.findAll();
-    }
-
-    @Override
-    public String uploadImage(String path, MultipartFile file) throws IOException {
-
-        //File name
-        String name = file.getOriginalFilename();
-
-        String randomId = UUID.randomUUID().toString();
-        String fileName = randomId.concat(name.substring(name.lastIndexOf(".")));
-
-        //Full path
-        String filePath = path + File.separator + fileName;
-
-
-        //Create folder if not creater
-        File f = new File(path);
-        if (!f.exists()) {
-            f.mkdir();
-        }
-        //File copy
-        Files.copy(file.getInputStream(), Paths.get(filePath));
-
-
-        return filePath;
     }
 
     @Override

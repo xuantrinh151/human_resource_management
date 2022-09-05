@@ -18,7 +18,6 @@ public class WebSecurityConfig {
 
     private final JwtResquestFilter jwtResquestFilter;
 
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -26,7 +25,10 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeRequests().anyRequest().permitAll()
+        httpSecurity.csrf().disable().authorizeRequests()
+                .antMatchers("/api/v1/employee/login").permitAll()
+                .antMatchers("/api/v1/employee/create").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(jwtResquestFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

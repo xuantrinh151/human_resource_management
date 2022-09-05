@@ -7,17 +7,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
 
 public class JwtTokenUtil {
-    private String secret = "NXT151";
-
-
+    private final String secret = "NXT151";
 
     public String generrateToken(Employee employee, long expiredDate) {
         Map<String, Object> claims = new HashMap<>();
@@ -31,16 +27,27 @@ public class JwtTokenUtil {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-//    public static TokenPayload getTokenPayLoad(String token) {
-//        return getClaimsFromToken(token,(Claims claim) ->{
-//            Map<String, Object> mapResult = (Map<String, Object>) claim.get("payload");
-//            return TokenPayload.builder()
-//                    .email().build();
-//        });
-//    }
+    public TokenPayload getTokenPayLoad(String token) {
+        return getClaimsFromToken(token,(Claims claim) ->{
+            Map<String, Object> mapResult = (Map<String, Object>) claim.get("payload");
+            return TokenPayload.builder()
+                    .id(Long.valueOf((Integer) mapResult.get("id")))
+                    .email((String) mapResult.get("email")).build();
+        });
+    }
 
     private <T> T getClaimsFromToken(String token, Function<Claims,T> claimResolver){
         final Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return claimResolver.apply(claims);
+    }
+
+    public boolean validate(String token, Optional<Employee> employee) {
+        TokenPayload tokenPayload = getTokenPayLoad(token);
+        return Objects.equals(tokenPayload.getId(), employee.get().getId()) && Objects.equals(tokenPayload.getEmail(), employee.get().getEmail()) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token){
+        Date expiredDate = getClaimsFromToken(token, Claims::getExpiration);
+        return expiredDate.before(new Date());
     }
 }

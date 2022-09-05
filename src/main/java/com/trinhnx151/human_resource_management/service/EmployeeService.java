@@ -12,10 +12,7 @@ import com.trinhnx151.human_resource_management.entity.Employee;
 import com.trinhnx151.human_resource_management.exception.custom.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,15 +21,13 @@ public interface EmployeeService {
 
     EmployeeSelfSdo findById(Long id) throws NotFoundException;
 
-    EmployeeCreateSdo create(EmployeeCreateSdi request,MultipartFile file) throws  Exception;
+    EmployeeCreateSdo create(EmployeeCreateSdi request) throws  Exception;
 
     EmployeeUpdateSdo update(EmployeeUpdateSdi request) throws Exception;
 
     Boolean deleteById(Long id);
 
     List<Employee> getAllEmployee();
-
-    String uploadImage (String path, MultipartFile file) throws IOException;
 
     Map<String, EmployeeSelfSdo> login(Map<String, EmployeeLoginSdi> request,HttpSession session);
 }
